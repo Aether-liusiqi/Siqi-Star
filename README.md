@@ -6,6 +6,8 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-4-orange)]()
 
+> **关键词 / Keywords**: 占星 · 本命盘 · 合盘 · 流年 · 每日运势 · 星座 · 星盘计算 · 心理洞察 · AI 占星 · astrology · birth-chart · natal-chart · compatibility · self-discovery
+
 ---
 
 ## 这是什么
