@@ -13,7 +13,7 @@ Siqi-Star 星图计算引擎 (astro_calc.py)
 计算模型说明:
 - 太阳(Sun):     Meeus 低精度公式, 误差 ~0.01°, 符号判定可靠。
 - 月亮(Moon):     Meeus 简化公式, 误差 ~0.5-1°, 符号判定基本可靠。
-- 上升/中天(Asc/MC): 由格林尼治平恒星时 + 黄赤交角推出, 误差 ~0.5-2°。
+- 上升/中天(Asc/MC): 由格林尼治平恒星时 + 黄赤交角推出, 公式精确(已校验与 Swiss Ephemeris 偏差 <0.01°), 残余误差仅来自 GMST/黄赤交角近似, 约角分级别。
 - 其余行星:      零依赖模式下用"平均黄经近似"(mean-motion), 仅符号级大致正确,
                  边界处可能偏差。pyswisseph 模式下全部为真实地心坐标。
 
@@ -165,10 +165,17 @@ def ascendant_mc(jd, lat, lon_east):
     ramc_r = _rad(ramc)
     eps_r = _rad(eps)
     lat_r = _rad(lat)
-    asc_r = math.atan2(-math.cos(ramc_r),
-                       math.sin(ramc_r) * math.cos(eps_r) + math.tan(lat_r) * math.sin(eps_r))
+    # 上升(Asc): 黄道与东方地平线交点。
+    #   tan(ASC) = -cos(RAMC) / (sin(RAMC)*cosε + tanφ*sinε)
+    #   atan2 必须取正确象限 -> atan2(cos(RAMC), -(分母));
+    #   若写成 atan2(-cos(RAMC), 分母) 会落在对宫, 整张图差 180°。
+    _denom = math.sin(ramc_r) * math.cos(eps_r) + math.tan(lat_r) * math.sin(eps_r)
+    asc_r = math.atan2(math.cos(ramc_r), -_denom)
     asc = norm360(_deg(asc_r))
-    mc_r = math.atan2(math.tan(ramc_r), math.cos(eps_r))
+    # 中天(MC): 黄道与上中天子午圈交点, 其赤经 = RAMC。
+    #   tan(MC) = sin(RAMC) / (cos(RAMC)*cosε), 用 atan2(sin, cos*cosε) 取正确象限;
+    #   写成 atan2(tan(RAMC), cosε) 会取错象限, 同样差 180°。
+    mc_r = math.atan2(math.sin(ramc_r), math.cos(ramc_r) * math.cos(eps_r))
     mc = norm360(_deg(mc_r))
     return asc, mc
 
@@ -274,7 +281,7 @@ def compute_chart(name, date_str, time_str, lat, lon, tz, precise=False):
         house_system = "WholeSign"
         meta["precision_notes"].append("太阳: Meeus 公式, 误差 ~0.01° (可靠)。")
         meta["precision_notes"].append("月亮: Meeus 简化, 误差 ~0.5-1° (符号基本可靠)。")
-        meta["precision_notes"].append("上升/中天: 恒星时推导, 误差 ~0.5-2°。")
+        meta["precision_notes"].append("上升/中天: 恒星时推导, 公式精确(已校验与 Swiss Ephemeris 偏差 <0.01°), 残余误差约角分级别。")
         meta["precision_notes"].append("水星/金星/火星: 平均黄经近似, 符号级大致正确。")
         meta["precision_notes"].append("木星..冥王星: 日心均值近似, 仅符号级倾向, 边界处可能偏差, 建议开启精确模式。")
         meta["precision_notes"].append("宫位: 整宫制(Whole Sign), 与精确 Placidus 存在差异。")

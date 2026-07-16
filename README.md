@@ -2,7 +2,7 @@
 
 > 一面陪你更懂自己的占星镜面。不说"我比你更懂你"，说"我们一起看看，你是谁"。
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-4-orange)]()
 
