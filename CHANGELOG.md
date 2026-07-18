@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-07-19
+
+### Fixed
+- 修复精确模式(precise, pyswisseph)下中天(MC)取值错误：原代码误取 `swe.houses()` 返回的 `ascmc[0]`（实际为上升 Asc），正确应为 `ascmc[1]`（中天）。改为先解包 `(cusps, ascmc)` 再取 `ascmc[1]`。已校验 MC 从错误值（=上升）修正为正确宫头
+
 ## [1.0.1] - 2026-07-16
 
 ### Fixed

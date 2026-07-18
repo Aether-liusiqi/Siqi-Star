@@ -239,8 +239,8 @@ def compute_precise(jd_ut, lat, lon_east):
         res = swe.calc(jd_ut, getattr(swe, code), flags)
         lon = res[0][0]
         positions[cn] = norm360(lon)
-    asc, mc = swe.houses(jd_ut, lat, lon_east, b"P")[0][0], \
-              swe.houses(jd_ut, lat, lon_east, b"P")[1][0]
+    _cusps, _ascmc = swe.houses(jd_ut, lat, lon_east, b"P")
+    asc, mc = _ascmc[0], _ascmc[1]
     # houses 返回 12 宫头(Placidus)
     house_starts = list(swe.houses(jd_ut, lat, lon_east, b"P")[0])
     return positions, norm360(asc), norm360(mc), house_starts, "precise"
